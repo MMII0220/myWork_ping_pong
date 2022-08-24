@@ -5,17 +5,21 @@
 #define height 16
 
 void printField(int ballX,int ballY, int rocketLeft, int rocketRight);
+int ballMovementY(int ballY);
+int ballMovementX(int ballX);
+int leftRocketMovement(int rocketLeft, char key);
+int rightRocketMovement(int rocketRight, char key);
+void play();
 
 
 int main() {
-    int ballX = 16, ballY = 7;
-    int rocketLeft = 6, rocketRight = 6;
+    play();
 
-    printField(ballX, ballY, rocketLeft, rocketRight);
     return 0;
 }
 
-void printField(int ballX,int ballY, int rocketLeft, int rocketRight) {
+
+void printField(int ballX, int ballY, int rocketLeft, int rocketRight) {
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             if (i == 0 || i == height - 1) {
@@ -35,6 +39,69 @@ void printField(int ballX,int ballY, int rocketLeft, int rocketRight) {
         printf("\n");
     }
 }
+
+
+void play() {
+    int ballX = 16, ballY = 7;
+    int rocketLeft = 6, rocketRight = 6;
+
+    printField(ballX, ballY, rocketLeft, rocketRight);
+
+    while (1) {
+        char keyPressed;
+        keyPressed = getchar();
+
+        if (keyPressed == 'X') {
+            printf("Game Stopped!");
+            break;
+        } else {
+            ballX = ballMovementX(ballX);
+            ballY = ballMovementY(ballY);
+
+            rocketLeft = leftRocketMovement(rocketLeft, keyPressed);
+            rocketRight = rightRocketMovement(rocketRight, keyPressed);
+
+            system("cls");
+
+            printField(ballX, ballY, rocketLeft, rocketRight);
+        }
+    }
+}
+
+
+int ballMovementX(int ballX) {
+    ballX -= 1;
+
+    return ballX;
+}
+
+int ballMovementY(int ballY) {
+    ballY += 1;
+
+    return ballY;
+}
+
+int leftRocketMovement(int rocketLeft, char key) {
+    if (key == 'W') {
+        rocketLeft -= 1;
+    } else if (key == 'S') {
+        rocketLeft += 1;
+    }
+
+    return rocketLeft;
+}
+
+int rightRocketMovement(int rocketRight, char key) {
+    if (key == 'E') {
+        rocketRight -= 1;
+    } else if (key == 'D') {
+        rocketRight += 1;
+    }
+
+    return rocketRight;
+}
+
+
 
 
 
