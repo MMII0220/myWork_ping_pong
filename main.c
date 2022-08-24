@@ -4,6 +4,7 @@
 #define width 32
 #define height 16
 
+
 void printField(int ballX,int ballY, int rocketLeft, int rocketRight);
 int ballMovementY(int ballY);
 int ballMovementX(int ballX);
@@ -58,19 +59,29 @@ void play() {
             ballX = ballMovementX(ballX);
             ballY = ballMovementY(ballY);
 
+            printf("%d\n", ballX);
+            printf("%d\n", ballY);
+
             rocketLeft = leftRocketMovement(rocketLeft, keyPressed);
             rocketRight = rightRocketMovement(rocketRight, keyPressed);
 
-            system("cls");
+            // system("cls");
 
             printField(ballX, ballY, rocketLeft, rocketRight);
         }
     }
 }
 
+// 8 15
+// 45 градус
+// 6 15
 
 int ballMovementX(int ballX) {
     ballX -= 1;
+
+    if (ballX < 14) {
+        ballX = 10;
+    }
 
     return ballX;
 }
@@ -88,6 +99,12 @@ int leftRocketMovement(int rocketLeft, char key) {
         rocketLeft += 1;
     }
 
+    if (rocketLeft < 1) {
+        rocketLeft = 1;
+    } else if (rocketLeft > height - 4) {
+        rocketLeft = height - 4;
+    }
+
     return rocketLeft;
 }
 
@@ -96,6 +113,12 @@ int rightRocketMovement(int rocketRight, char key) {
         rocketRight -= 1;
     } else if (key == 'D') {
         rocketRight += 1;
+    }
+
+    if (rocketRight < 1) {
+        rocketRight = 1;
+    } else if (rocketRight > height - 4) {
+        rocketRight = height - 4;
     }
 
     return rocketRight;
