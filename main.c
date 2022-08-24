@@ -1,35 +1,41 @@
 #include <stdio.h>
+#include <stdlib.h>
 
+#define width 32
+#define height 16
 
-#define width 31
-#define height 11
+void printField(int ballX,int ballY, int rocketLeft, int rocketRight);
 
-void printGame(int bX, int bY);
 
 int main() {
-    int ballX = 15, ballY = 5;
-    int rocketY = 15, rocketX = 1;
-    
-    printGame(ballX, ballY);
-    
+    int ballX = 16, ballY = 7;
+    int rocketLeft = 6, rocketRight = 6;
+
+    printField(ballX, ballY, rocketLeft, rocketRight);
     return 0;
 }
 
-void printGame(int bX, int bY) {
-    for (int x = 0; x < height; x++) {
-        for (int y = 0; y < width; y++) {
-            if (x == 0 || x == height - 1) {
+void printField(int ballX,int ballY, int rocketLeft, int rocketRight) {
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            if (i == 0 || i == height - 1) {
                 printf("-");
-            } else if (y == bX && x == bY) {
-                printf("o");
-            }/* else if() {
-                printf(|);
-            }*/ else if ((x != 0 && y == 0) || (y == width - 1)) {
+            } else if (j == 0 || j == width -1) {
                 printf("|");
-            }  else if(x != 0 && y != 0 && x != height - 1 && y != width - 1) {
+            } else if (i == ballY && j == ballX) {
+                printf("o");
+            } else if (j == 1 && (i >= rocketLeft && i <= rocketLeft + 2)) {
+                printf("|");
+            } else if (j == 30 && (i >= rocketRight && i <= rocketRight + 2)) {
+                printf("|");
+            } else if (i != 0 && j != 0 && j != width - 1 && i != height - 1) {
                 printf(" ");
-            }  
+            }
         }
         printf("\n");
     }
 }
+
+
+
+
