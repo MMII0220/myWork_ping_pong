@@ -1,13 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int leftRocketOffsetGlobal, rightRocketOffsetGlobal;
-#define width 32
-#define height 16
-
-
-void printField(int ballX, int ballY, int rocketLeft, int rocketRight);
-void getInput();
 int getLeftRocketOffset(char key);
 int getRightRocketOffset(char key);
 int getRocketY(int rocketY, int offsetY);
@@ -15,7 +8,14 @@ int getBallCoordX(int ballOld, int ball);
 int getBallCoordY(int ballOld, int ball);
 int getBallXFromWall(int ballXOld, int ballX);
 int getBallYFromWall(int ballYOld, int ballY);
+void getInput();
+void printField(int ballX, int ballY, int rocketLeft, int rocketRight);
 void play();
+
+
+int leftRocketOffsetGlobal, rightRocketOffsetGlobal;
+#define width 32
+#define height 16
 
 
 int main() {
@@ -55,22 +55,27 @@ void play() {
 
     printField(ballX, ballY, rocketLeft, rocketRight);
 
+    int leftRocketOffset, rightRocketOffset;
+
+    int updatedLeftRocketY;
+    int updatedRightRocketY;
+
+    int updatedBallX, updatedBallY;
+
     while (1) {
-        int leftRocketOffset, rightRocketOffset;
-
         getInput();
-
 
         leftRocketOffset = leftRocketOffsetGlobal;
         rightRocketOffset = rightRocketOffsetGlobal;
 
-        int updatedLeftRocketY = getRocketY(rocketLeft, leftRocketOffset);
-        int updatedRightRocketY = getRocketY(rocketRight, rightRocketOffset);
-        int updatedBallX, updatedBallY;
+        updatedLeftRocketY = getRocketY(rocketLeft, leftRocketOffset);
+        updatedRightRocketY = getRocketY(rocketRight, rightRocketOffset);
 
         if (ballY == 0 || ballY == 14) {
             updatedBallX = getBallXFromWall(ballXOld, ballX);
             updatedBallY = getBallYFromWall(ballYOld, ballY);
+        } else if () {
+            
         } else {
             updatedBallX = getBallCoordX(ballXOld, ballX);
             updatedBallY = getBallCoordY(ballYOld, ballY);
@@ -93,14 +98,15 @@ void play() {
 
 
 void getInput() {
-    char keyPressed = getchar();
+    char keyPressed;
+    keyPressed = getchar();
 
     int leftRocketOffset = 0, rightRocketOffset = 0;
 
-    if (keyPressed == ('A' || 'a') || keyPressed == ('Z' || 'z')) {
+    if (keyPressed == 'A' || keyPressed == 'Z' || keyPressed == 'a' || keyPressed == 'z') {
         leftRocketOffset = getLeftRocketOffset(keyPressed);
 
-    } else if (keyPressed == ('K' || 'k') || keyPressed == ('M' || 'm')) {
+    } else if (keyPressed == 'K' || keyPressed == 'M' || keyPressed == 'k' || keyPressed == 'm') {
         rightRocketOffset = getRightRocketOffset(keyPressed);
 
     }/* else {  // Удали это и различие в чем будет ---------------------
@@ -120,7 +126,7 @@ int getLeftRocketOffset(char key) {
 
     if (key == 'A' || key == 'a') {
         move = -1;
-    } else if (key == ('Z' || 'z')) {
+    } else if (key == 'Z' || key == 'z') {
         move = 1;
     } else {
         move = 0;
@@ -132,9 +138,9 @@ int getLeftRocketOffset(char key) {
 int getRightRocketOffset(char key) {
     int move = 0;
 
-    if (key == ('K' || 'k')) {
+    if (key == 'K' || key == 'k') {
         move = -1;
-    } else if (key == ('M' || 'm')) {
+    } else if (key == 'M' || key == 'm') {
         move = 1;
     } else {
         move = 0;
