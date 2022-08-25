@@ -2,9 +2,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+
 int leftRocketOffsetGlobal, rightRocketOffsetGlobal;
 #define width 32
 #define height 16
+
 
 int getLeftRocketOffset(char key);
 
