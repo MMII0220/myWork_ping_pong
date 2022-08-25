@@ -4,8 +4,10 @@
 
 
 int leftRocketOffsetGlobal, rightRocketOffsetGlobal;
-#define width 32
-#define height 16
+// #define width 32
+// #define height 16
+#define width 81
+#define height 26
 
 
 int getLeftRocketOffset(char key);
@@ -53,7 +55,7 @@ void printField(int ballX, int ballY, int rocketLeft, int rocketRight, int leftP
                 printf("o");
             } else if (j == 1 && (i >= rocketLeft && i <= rocketLeft + 2)) {
                 printf("|");
-            } else if (j == 30 && (i >= rocketRight && i <= rocketRight + 2)) {
+            } else if (j == width - 3 && (i >= rocketRight && i <= rocketRight + 2)) {
                 printf("|");
             } else if (i != 0 && j != 0 && j != width - 1 && i != height - 1) {
                 printf(" ");
@@ -65,10 +67,10 @@ void printField(int ballX, int ballY, int rocketLeft, int rocketRight, int leftP
 
 
 void Play() {  // Вся наша игра
-    int ballX = 16, ballY = 7;
-    int rocketLeft = 6, rocketRight = 6;
+    int ballX = 40, ballY = 12;
+    int rocketLeft = 10, rocketRight = 10;
 
-    int ballXOld = 17, ballYOld = 6;
+    int ballXOld = 41, ballYOld = 11;
 
     int leftPlayerScore = 0, rightPlayerScore = 0;
 
@@ -81,7 +83,7 @@ void Play() {  // Вся наша игра
 
     int updatedBallX, updatedBallY;
 
-    while (leftPlayerScore < 2 && rightPlayerScore < 2) {
+    while (leftPlayerScore < 12 && rightPlayerScore < 12) {
         getInput();
 
         leftRocketOffset = leftRocketOffsetGlobal;
@@ -90,13 +92,29 @@ void Play() {  // Вся наша игра
         updatedLeftRocketY = getRocketY(rocketLeft, leftRocketOffset);
         updatedRightRocketY = getRocketY(rocketRight, rightRocketOffset);
 
-        if (ballY == 0 || ballY == 14) {  // Отражение от стены
+        if (ballY == 0 && ballX == 1 &&
+        updatedLeftRocketY == 0) {  // if left racket and ball in the top left corner
+            updatedBallX = 2;
+            updatedBallY = 1;
+        } else if (ballY == (height - 2) && ballX == 1 &&
+        updatedLeftRocketY == (height - 4)) {  // if left racket and ball in the bottom left corner
+            updatedBallX = 2;
+            updatedBallY = height - 3;
+        } else if (ballY == 0 && ballX == (width - 3) &&
+        updatedRightRocketY == 0) {  // if right racket and ball in the top right corner
+            updatedBallX = width - 3;
+            updatedBallY = 1;
+        } else if (ballY == height - 2 && ballX == (width - 3) &&
+        updatedRightRocketY == (height - 4)) {  // if right racket and ball in the bottom right corner
+            updatedBallX = width - 3;
+            updatedBallY = height - 3;
+        } else if (ballY == 0 || ballY == height - 2) {  // Отражение от стены
             updatedBallX = getBallXFromWall(ballXOld, ballX);
             updatedBallY = getBallYFromWall(ballYOld, ballY);
         } else if (ballX == 2 && (ballY >= updatedLeftRocketY && ballY <= updatedLeftRocketY + 2)) {  // Отражение от левой ракетки
             updatedBallX = getBallXFromRocket(ballXOld, ballX);
             updatedBallY = getBallYFromRocket(ballYOld, ballY);
-        } else if (ballX == 29 && (ballY >= updatedRightRocketY && ballY <= updatedRightRocketY + 2)) {  // Отражение от правой ракетки
+        } else if (ballX == (width - 2) && (ballY >= updatedRightRocketY && ballY <= updatedRightRocketY + 2)) {  // Отражение от правой ракетки
             updatedBallX = getBallXFromRocket(ballXOld, ballX);
             updatedBallY = getBallYFromRocket(ballYOld, ballY);
         } else {  // При любом случае условия, мяч сдвигается
@@ -113,17 +131,24 @@ void Play() {  // Вся наша игра
         rocketLeft = updatedLeftRocketY;
         rocketRight = updatedRightRocketY;
 
-        if (ballX == 1 || ballX == 30) {
+        if (ballX == 1 || ballX == width - 2) {
+            // Вернем все местоположения по-умочанию
+            ballX = 40, ballY = 12;
+            rocketLeft = 10, rocketRight = 10;
+
             if (ballX == 1) {  // Если Гол забил правый игрок
                 rightPlayerScore++;
-            } else if (ballX == 30) {  // Если Гол забил левый игрок
+
+                ballXOld = 41;  // Мяч полетит влево при старте
+                ballYOld = 11;
+            } else {  // Если Гол забил левый игрок
                 leftPlayerScore++;
+
+                ballXOld = 39;;  // Мяч полетит вправо при старте
+                ballYOld = 13;
             }
 
-            // Вернем все местоположения по-умочанию
-            ballX = 16, ballY = 7;
-            rocketLeft = 6, rocketRight = 6;
-            ballXOld = 17, ballYOld = 6;
+            system("cls");
 
             printf("\t\tGoal!!!\n\n");
             sleep(1);
@@ -134,9 +159,9 @@ void Play() {  // Вся наша игра
         printField(ballX, ballY, rocketLeft, rocketRight, leftPlayerScore, rightPlayerScore);
     }
 
-    if (leftPlayerScore == 2) {
+    if (leftPlayerScore == 12) {
         printf("Congratulation!\nPlayer 1 won!");
-    } else if (rightPlayerScore == 2) {
+    } else if (rightPlayerScore == 12) {
         printf("Congratulation!\nPlayer 2 won!");
     }
 
@@ -152,10 +177,8 @@ void getInput() {  // Меняем местоположения наших ра�
 
     if (keyPressed == 'A' || keyPressed == 'Z' || keyPressed == 'a' || keyPressed == 'z') {
         leftRocketOffset = getLeftRocketOffset(keyPressed);
-
     } else if (keyPressed == 'K' || keyPressed == 'M' || keyPressed == 'k' || keyPressed == 'm') {
         rightRocketOffset = getRightRocketOffset(keyPressed);
-
     }
 
     leftRocketOffsetGlobal = leftRocketOffset;
@@ -197,8 +220,8 @@ int getRocketY(int rocketY, int offsetY) {  // Если наша ракетка 
 
     if (updatedRocketY < 1) {
         move = 1;
-    } else if (updatedRocketY > 12) {
-        move = 12;
+    } else if (updatedRocketY > (height - 4)) {
+        move = height - 4;
     } else {
         move = updatedRocketY;
     }
@@ -214,8 +237,8 @@ int getBallCoordX(int ballOld, int ball) {  // Двигаем наш мяч по
 
     if (updatedBall < 0) {
         move = 0;
-    } else if (updatedBall > 30) {
-        move = 30;
+    } else if (updatedBall > (width - 2)) {
+        move = width - 2;
     } else {
         move = updatedBall;
     }
@@ -229,10 +252,10 @@ int getBallCoordY(int ballOld, int ball) {  // Двигаем наш мяч по
     int offset = ball - ballOld;
     int updatedBall = ball + offset;
 
-    if (updatedBall < 0) {
-        move = 0;
-    } else if (updatedBall > 14) {
-        move = 14;
+    if (updatedBall < 1) {
+        move = 1;
+    } else if (updatedBall > (height - 1)) {
+        move = height - 1;
     } else {
         move = updatedBall;
     }
