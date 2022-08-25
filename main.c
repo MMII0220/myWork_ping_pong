@@ -113,10 +113,10 @@ void Play() {  // Вся наша игра
         rocketLeft = updatedLeftRocketY;
         rocketRight = updatedRightRocketY;
 
-        if (ballX == 1 || ballX == 31) {
+        if (ballX == 1 || ballX == 30) {
             if (ballX == 1) {  // Если Гол забил правый игрок
                 rightPlayerScore++;
-            } else if (ballX == 31) {  // Если Гол забил левый игрок
+            } else if (ballX == 30) {  // Если Гол забил левый игрок
                 leftPlayerScore++;
             }
 
