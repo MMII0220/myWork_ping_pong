@@ -1,15 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int leftRocketOffsetGlobal, rightRocketOffsetGlobal;
 #define width 32
 #define height 16
 
 
-void printField(int ballX,int ballY, int rocketLeft, int rocketRight);
-int ballMovementY(int ballY);
-int ballMovementX(int ballX);
-int leftRocketMovement(int rocketLeft, char key);
-int rightRocketMovement(int rocketRight, char key);
+void printField(int ballX, int ballY, int rocketLeft, int rocketRight);
+void getInput();
+int getLeftRocketOffset(char key);
+int getRightRocketOffset(char key);
+int getRocketY(int rocketY, int offsetY);
+int getBallCoordX(int ballOld, int ball);
+int getBallCoordY(int ballOld, int ball);
+int getBallXFromWall(int ballXOld, int ballX);
+int getBallYFromWall(int ballYOld, int ballY);
 void play();
 
 
@@ -46,86 +51,156 @@ void play() {
     int ballX = 16, ballY = 7;
     int rocketLeft = 6, rocketRight = 6;
 
+    int ballXOld = 17, ballYOld = 6;
+
     printField(ballX, ballY, rocketLeft, rocketRight);
 
     while (1) {
-        char keyPressed;
-        keyPressed = getchar();
+        int leftRocketOffset, rightRocketOffset;
 
-        if (keyPressed == 'X') {
-            printf("Game Stopped!");
-            break;
+        getInput();
+
+
+        leftRocketOffset = leftRocketOffsetGlobal;
+        rightRocketOffset = rightRocketOffsetGlobal;
+
+        int updatedLeftRocketY = getRocketY(rocketLeft, leftRocketOffset);
+        int updatedRightRocketY = getRocketY(rocketRight, rightRocketOffset);
+        int updatedBallX, updatedBallY;
+
+        if (ballY == 0 || ballY == 14) {
+            updatedBallX = getBallXFromWall(ballXOld, ballX);
+            updatedBallY = getBallYFromWall(ballYOld, ballY);
         } else {
-            ballX = ballMovementX(ballX);
-            ballY = ballMovementY(ballY);
-
-            printf("%d\n", ballX);
-            printf("%d\n", ballY);
-
-            rocketLeft = leftRocketMovement(rocketLeft, keyPressed);
-            rocketRight = rightRocketMovement(rocketRight, keyPressed);
-
-            // system("cls");
-
-            printField(ballX, ballY, rocketLeft, rocketRight);
+            updatedBallX = getBallCoordX(ballXOld, ballX);
+            updatedBallY = getBallCoordY(ballYOld, ballY);
         }
+
+        ballXOld = ballX;
+        ballYOld = ballY;
+
+        ballX = updatedBallX;
+        ballY = updatedBallY;
+
+        rocketLeft = updatedLeftRocketY;
+        rocketRight = updatedRightRocketY;
+
+        system("cls");
+
+        printField(ballX, ballY, rocketLeft, rocketRight);
     }
 }
 
-// 8 15
-// 45 градус
-// 6 15
 
-int ballMovementX(int ballX) {
-    ballX -= 1;
+void getInput() {
+    char keyPressed = getchar();
 
-    if (ballX < 14) {
-        ballX = 10;
-    }
+    int leftRocketOffset = 0, rightRocketOffset = 0;
 
-    return ballX;
+    if (keyPressed == ('A' || 'a') || keyPressed == ('Z' || 'z')) {
+        leftRocketOffset = getLeftRocketOffset(keyPressed);
+
+    } else if (keyPressed == ('K' || 'k') || keyPressed == ('M' || 'm')) {
+        rightRocketOffset = getRightRocketOffset(keyPressed);
+
+    }/* else {  // Удали это и различие в чем будет ---------------------
+        if (keyPressed == ('A' || 'a') || keyPressed == ('Z' || 'z')) {
+            leftRocketOffset = getLeftRocketOffset(keyPressed);
+        } else {
+            rightRocketOffset = getRightRocketOffset(keyPressed);
+        }
+    }*/ // до сюда ------------------------------------------------------
+
+    leftRocketOffsetGlobal = leftRocketOffset;
+    rightRocketOffsetGlobal = rightRocketOffset;
 }
 
-int ballMovementY(int ballY) {
-    ballY += 1;
+int getLeftRocketOffset(char key) {
+    int move = 0;
 
-    return ballY;
+    if (key == 'A' || key == 'a') {
+        move = -1;
+    } else if (key == ('Z' || 'z')) {
+        move = 1;
+    } else {
+        move = 0;
+    }
+
+    return move;
 }
 
-int leftRocketMovement(int rocketLeft, char key) {
-    if (key == 'W') {
-        rocketLeft -= 1;
-    } else if (key == 'S') {
-        rocketLeft += 1;
+int getRightRocketOffset(char key) {
+    int move = 0;
+
+    if (key == ('K' || 'k')) {
+        move = -1;
+    } else if (key == ('M' || 'm')) {
+        move = 1;
+    } else {
+        move = 0;
     }
 
-    if (rocketLeft < 1) {
-        rocketLeft = 1;
-    } else if (rocketLeft > height - 4) {
-        rocketLeft = height - 4;
-    }
-
-    return rocketLeft;
+    return move;
 }
 
-int rightRocketMovement(int rocketRight, char key) {
-    if (key == 'E') {
-        rocketRight -= 1;
-    } else if (key == 'D') {
-        rocketRight += 1;
+int getRocketY(int rocketY, int offsetY) {
+    int updatedRocketY = rocketY + offsetY;
+    int move = 0;
+
+    if (updatedRocketY < 0) {
+        move = 0;
+    } else if (updatedRocketY > 12) {
+        move = 12;
+    } else {
+        move = updatedRocketY;
     }
 
-    if (rocketRight < 1) {
-        rocketRight = 1;
-    } else if (rocketRight > height - 4) {
-        rocketRight = height - 4;
-    }
-
-    return rocketRight;
+    return move;
 }
 
+int getBallCoordX(int ballOld, int ball) {
+    int offset = ball - ballOld;
+    int updatedBall = ball + offset;
 
+    int move;
 
+    if (updatedBall < 0) {
+        move = 0;
+    } else if (updatedBall > 30) {
+        move = 30;
+    } else {
+        move = updatedBall;
+    }
 
+    return move;
+}
 
+int getBallCoordY(int ballOld, int ball) {
+    int move;
+
+    int offset = ball - ballOld;
+    int updatedBall = ball + offset;
+
+    if (updatedBall < 0) {
+        move = 0;
+    } else if (updatedBall > 14) {
+        move = 14;
+    } else {
+        move = updatedBall;
+    }
+
+    return move;
+}
+
+int getBallXFromWall(int ballXOld, int ballX) {
+    int offset = ballX - ballXOld;
+
+    return ballX + offset;
+}
+
+int getBallYFromWall(int ballYOld, int ballY) {
+    int offset = ballYOld - ballY;
+
+    return ballY + offset;
+}
 
